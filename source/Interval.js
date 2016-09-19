@@ -19,8 +19,10 @@ export default class Interval {
 	 * @returns {Interval}
 	 */
 	static Define(t0, tDelta, n0, nDelta, ease, target) {
-		if (target === undefined) return new this(t0, tDelta, n0, nDelta, ease);
-		else return this.call(target, t0, tDelta, n0, nDelta, ease);
+		if (target === undefined) target = new this(t0, tDelta, n0, nDelta, ease);
+		else this.call(target, t0, tDelta, n0, nDelta, ease);
+
+		return target;
 	}
 
 	/**

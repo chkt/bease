@@ -141,8 +141,10 @@ export default class BezierEase {
 	 * @returns {BezierEase}
 	 */
 	static Define(x1, y1, x2, y2, target) {
-		if (target === undefined) return new this(x1, y1, x2, y2);
+		if (target === undefined) target = new this(x1, y1, x2, y2);
 		else this.call(target, x1, y1, x2, y2);
+
+		return target;
 	}
 
 	/**
