@@ -1,10 +1,15 @@
 {
 	"name" : "bease",
 	"description" : "Bezier curve easing",
-	"version" : "0.1.0",
+	"version" : "0.1.1",
 	"license" : "MIT",
 
-	"keywords" : [],
+	"keywords" : [
+		"animation",
+		"easing",
+		"interval",
+		"cubic bezier"
+	],
 
 	"author" : {
 		"name" : "Christoph Kettelhoit",
