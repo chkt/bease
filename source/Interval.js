@@ -137,9 +137,9 @@ export default class Interval {
 	nOfT(t) {
 		let f = (t - this.t0) / this.tDelta;
 
-		f = f < 0.0 ? 0.0 : (f > 1.0 ? 1.0 : f);
-
-		return this.n0 + this.nDelta * this.ease.yOfT(this.ease.tOfX(f));
+		if (f <= 0.0) return this.n0;
+		else if (f >= 1.0) return this.n0 + this.nDelta;
+		else return this.n0 + this.nDelta * this.ease.yOfT(this.ease.tOfX(f));
 	}
 
 	/**
@@ -158,8 +158,14 @@ export default class Interval {
 	 * @returns {string}
 	 */
 	toString(digits = 3) {
-		return '[Interval]' +
-			'\t' + this.t0.toFixed(digits) + ' ' + this.tDelta.toFixed(digits) +
-			'\t' + this.n0.toFixed(digits) + ' ' + this.nDelta.toFixed(digits);
+		return `[Interval]${
+				this.t0.toFixed(digits)
+			} ${
+				this.tDelta.toFixed(digits)
+			} - ${
+				this.n0.toFixed(digits)
+			} ${
+				this.nDelta.toFixed(digits)
+			}`;
 	}
 }
