@@ -10,11 +10,12 @@ function _testInterval(t0, tDelta, n0, nDelta) {
 	const ease = BezierEase.Linear();
 	const iv = new Interval(t0, tDelta, n0, nDelta, ease);
 
-	for (let f = 0.02; f < 1.0; f += 0.02) {
+	for (let f = -1.00; f <= 2.0; f += 0.02) {
 		const t = t0 + f * tDelta;
-		const n = n0 + nDelta * f;
+		const n = Math.min(Math.max(n0 + nDelta * f, n0), n0 + nDelta);
+		const ret = iv.nOfT(t);
 
-		assert(iv.nOfT(t) - n < 1.0e-5, `t: ${ t.toFixed(4) } returned n: ${ iv.nOfT(t.toFixed(4)) }, expected n: ${ n.toFixed(4) }`);
+		assert(Math.abs(ret - n) < 1.0e-4, `t: ${ t } returned n: ${ ret }, expected n: ${ n }`);
 	}
 }
 
