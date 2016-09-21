@@ -3,7 +3,7 @@
 ##Install
 
 ```sh
-$ npm install ease
+$ npm install bease
 ```
 
 ##Use
