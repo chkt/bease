@@ -50,6 +50,28 @@ function _buildTN(tn, abc) {
 }
 
 
+/**
+ * Returns the t of n
+ * Using Newton-Raphson iteration
+ * @private
+ * @param {number} n - The n coordinate
+ * @param {number} t - The lookup table approximation of t(n)
+ * @param {number} d - The first derivate of t(n)
+ * @param {number} a - The value of term a of n
+ * @param {number} b - The value of term b of n
+ * @param {number} c - The value of term c of n
+ * @returns {number}
+ */
+function _subdivideNewton(n, t, d, a, b, c) {
+	for (let i = 0; i < 4; i += 1) {
+		t -= (((a * t + b) * t + c) * t - n) / d;
+		d = (3.0 * a * t + 2.0 * b) * t + c;
+
+		if (d === 0.0) break;
+	}
+
+	return t;
+}
 
 /**
  * Returns the t of n
@@ -71,8 +93,8 @@ function _subdivideN(n, a, b, an, bn, cn) {
 
 		const c = ((an * t + bn) * t + cn) * t - n;
 
-		if (c > 1.0e-5) b = t;
-		else if (c < -1.0e-5) a = t;
+		if (c > 1.0e-8) b = t;
+		else if (c < -1.0e-8) a = t;
 		else break;
 	}
 
@@ -81,7 +103,7 @@ function _subdivideN(n, a, b, an, bn, cn) {
 
 /**
  * Returns the t of n
- * Using Newton-Raphson iteration when suitable
+ * Using Newton-Raphson iteration when suitable, binary subdivision otherwise
  * p(n+1) = pn - f(pn) / f'(pn)
  * @private
  * @param {WeakMap} _abcn - The term map
@@ -109,19 +131,12 @@ function _tOfN(_abcn, _tn, _n, n) {
 	i -= 1;
 
 	const ti = i * 0.1;
-	let t = ti + (n - tn[i]) / (tn[i + 1] - tn[i]) * 0.1;
-	let d = 3.0 * a * t * t + 2.0 * b * t + c;
+	const t = ti + (n - tn[i]) / (tn[i + 1] - tn[i]) * 0.1;
+	const d = (3.0 * a * t + 2.0 * b) * t + c;
 
-	if (d < 0.21) return _subdivideN(n, ti, ti + 0.1, a, b, c);
-
-	for (let i = 0; i < 4; i += 1) {
-		t -= (((a * t + b) * t + c) * t - n) / d;
-		d = 3.0 * a * t * t + 2.0 * b * t + c;
-
-		if (d === 0.0) break;
-	}
-
-	return t;
+	if (d > 0.2) return _subdivideNewton(n, t, d, a, b, c);
+	else if (d === 0.0) return t;
+	else return _subdivideN(n, ti, ti + 0.1, a, b, c);
 }
 
 
@@ -190,6 +205,22 @@ export default class BezierEase {
 	 */
 	static EaseInOut(target) {
 		return this.Define(0.42, 0.0, 0.58, 1.0, target);
+	}
+
+
+	/**
+	 * Returns true if a == b, false otherwise
+	 * @param {BezierEase} a - The protagonist
+	 * @param {BezierEase} b - The antagonist
+	 * @returns {boolean}
+	 */
+	static isEQ(a, b) {
+		if (a === b) return true;
+
+		const [ax1, ax2] = _x.get(a), [ay1, ay2] = _y.get(a);
+		const [bx1, bx2] = _x.get(b), [by1, by2] = _y.get(b);
+
+		return ax1 === bx1 && ax2 === bx2 && ay1 === by1 && ay2 === by2;
 	}
 
 
@@ -375,22 +406,6 @@ export default class BezierEase {
 	 */
 	yOfX(x) {
 		return this.yOfT(this.tOfX(x));
-	}
-
-
-	/**
-	 * Returns true if a == b, false otherwise
-	 * @param {BezierEase} a - The protagonist
-	 * @param {BezierEase} b - The antagonist
-	 * @returns {boolean}
-	 */
-	isEQ(a, b) {
-		if (a === b) return true;
-
-		const [ax1, ax2] = _x.get(a), [ay1, ay2] = _y.get(a);
-		const [bx1, bx2] = _x.get(b), [by1, by2] = _y.get(b);
-
-		return ax1 === bx1 && ax2 === bx2 && ay1 === by1 && ay2 === by2;
 	}
 
 
