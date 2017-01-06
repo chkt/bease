@@ -1,4 +1,4 @@
-#ease
+#bease
 
 ##Install
 
@@ -179,7 +179,7 @@ Returns a string representation of the instance
 
 **Parameters**
 
--   `digits`  
+-   `digits` **int?** The decimal places (optional, default `3`)
 
 Returns **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
