@@ -147,7 +147,6 @@ export default class BezierEase {
 
 	/**
 	 * Returns a defined instance
-	 * @constructor
 	 * @param {number} x1 - The x coordinate of the second control point
 	 * @param {number} y1 - The y coordinate of the second control point
 	 * @param {number} x2 - The x coordinate of the third control point
@@ -260,7 +259,7 @@ export default class BezierEase {
 
 	/**
 	 * The x coordinate of the second control point
-	 * @type number
+	 * @type {number}
 	 */
 	get x1() {
 		return _x.get(this)[0];
@@ -280,7 +279,7 @@ export default class BezierEase {
 
 	/**
 	 * The y coordinate of the second control point
-	 * @type number
+	 * @type {number}
 	 */
 	get y1() {
 		return _y.get(this)[0];
@@ -300,7 +299,7 @@ export default class BezierEase {
 
 	/**
 	 * The x coordinate of the third control point
-	 * @type number
+	 * @type {number}
 	 */
 	get x2() {
 		return _x.get(this)[1];
@@ -320,7 +319,7 @@ export default class BezierEase {
 
 	/**
 	 * The y coordinate of the third control point
-	 * @type number
+	 * @type {number}
 	 */
 	get y2() {
 		return _y.get(this)[1];
@@ -411,6 +410,7 @@ export default class BezierEase {
 
 	/**
 	 * Returns a string representation of the instance
+	 * @param {int} [digits=3] - The decimal places
 	 * @returns {string}
 	 */
 	toString(digits = 3) {
