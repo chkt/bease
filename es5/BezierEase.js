@@ -63,6 +63,29 @@ function _buildTN(tn, abc) {
 
 /**
  * Returns the t of n
+ * Using Newton-Raphson iteration
+ * @private
+ * @param {number} n - The n coordinate
+ * @param {number} t - The lookup table approximation of t(n)
+ * @param {number} d - The first derivate of t(n)
+ * @param {number} a - The value of term a of n
+ * @param {number} b - The value of term b of n
+ * @param {number} c - The value of term c of n
+ * @returns {number}
+ */
+function _subdivideNewton(n, t, d, a, b, c) {
+	for (var i = 0; i < 4; i += 1) {
+		t -= (((a * t + b) * t + c) * t - n) / d;
+		d = (3.0 * a * t + 2.0 * b) * t + c;
+
+		if (d === 0.0) break;
+	}
+
+	return t;
+}
+
+/**
+ * Returns the t of n
  * Using binary subdivision
  * @private
  * @param {number} n - The n coordinate
@@ -81,7 +104,7 @@ function _subdivideN(n, a, b, an, bn, cn) {
 
 		var c = ((an * t + bn) * t + cn) * t - n;
 
-		if (c > 1.0e-5) b = t;else if (c < -1.0e-5) a = t;else break;
+		if (c > 1.0e-8) b = t;else if (c < -1.0e-8) a = t;else break;
 	}
 
 	return t;
@@ -89,7 +112,7 @@ function _subdivideN(n, a, b, an, bn, cn) {
 
 /**
  * Returns the t of n
- * Using Newton-Raphson iteration when suitable
+ * Using Newton-Raphson iteration when suitable, binary subdivision otherwise
  * p(n+1) = pn - f(pn) / f'(pn)
  * @private
  * @param {WeakMap} _abcn - The term map
@@ -126,18 +149,9 @@ function _tOfN(_abcn, _tn, _n, n) {
 
 	var ti = i * 0.1;
 	var t = ti + (n - tn[i]) / (tn[i + 1] - tn[i]) * 0.1;
-	var d = 3.0 * a * t * t + 2.0 * b * t + c;
+	var d = (3.0 * a * t + 2.0 * b) * t + c;
 
-	if (d < 0.21) return _subdivideN(n, ti, ti + 0.1, a, b, c);
-
-	for (var _i = 0; _i < 4; _i += 1) {
-		t -= (((a * t + b) * t + c) * t - n) / d;
-		d = 3.0 * a * t * t + 2.0 * b * t + c;
-
-		if (d === 0.0) break;
-	}
-
-	return t;
+	if (d > 0.2) return _subdivideNewton(n, t, d, a, b, c);else if (d === 0.0) return t;else return _subdivideN(n, ti, ti + 0.1, a, b, c);
 }
 
 /**
@@ -160,7 +174,9 @@ var BezierEase = function () {
    * @returns {BezierEase}
    */
 		value: function Define(x1, y1, x2, y2, target) {
-			if (target === undefined) return new this(x1, y1, x2, y2);else this.call(target, x1, y1, x2, y2);
+			if (target === undefined) target = new this(x1, y1, x2, y2);else this.call(target, x1, y1, x2, y2);
+
+			return target;
 		}
 
 		/**
@@ -221,6 +237,48 @@ var BezierEase = function () {
 		key: "EaseInOut",
 		value: function EaseInOut(target) {
 			return this.Define(0.42, 0.0, 0.58, 1.0, target);
+		}
+
+		/**
+   * Returns true if a == b, false otherwise
+   * @param {BezierEase} a - The protagonist
+   * @param {BezierEase} b - The antagonist
+   * @returns {boolean}
+   */
+
+	}, {
+		key: "isEQ",
+		value: function isEQ(a, b) {
+			if (a === b) return true;
+
+			var _x$get = _x.get(a);
+
+			var _x$get2 = _slicedToArray(_x$get, 2);
+
+			var ax1 = _x$get2[0];
+			var ax2 = _x$get2[1];
+			var _y$get = _y.get(a);
+
+			var _y$get2 = _slicedToArray(_y$get, 2);
+
+			var ay1 = _y$get2[0];
+			var ay2 = _y$get2[1];
+
+			var _x$get3 = _x.get(b);
+
+			var _x$get4 = _slicedToArray(_x$get3, 2);
+
+			var bx1 = _x$get4[0];
+			var bx2 = _x$get4[1];
+			var _y$get3 = _y.get(b);
+
+			var _y$get4 = _slicedToArray(_y$get3, 2);
+
+			var by1 = _y$get4[0];
+			var by2 = _y$get4[1];
+
+
+			return ax1 === bx1 && ax2 === bx2 && ay1 === by1 && ay2 === by2;
 		}
 
 		/**
@@ -353,48 +411,6 @@ var BezierEase = function () {
 		key: "yOfX",
 		value: function yOfX(x) {
 			return this.yOfT(this.tOfX(x));
-		}
-
-		/**
-   * Returns true if a == b, false otherwise
-   * @param {BezierEase} a - The protagonist
-   * @param {BezierEase} b - The antagonist
-   * @returns {boolean}
-   */
-
-	}, {
-		key: "isEQ",
-		value: function isEQ(a, b) {
-			if (a === b) return true;
-
-			var _x$get = _x.get(a);
-
-			var _x$get2 = _slicedToArray(_x$get, 2);
-
-			var ax1 = _x$get2[0];
-			var ax2 = _x$get2[1];
-			var _y$get = _y.get(a);
-
-			var _y$get2 = _slicedToArray(_y$get, 2);
-
-			var ay1 = _y$get2[0];
-			var ay2 = _y$get2[1];
-
-			var _x$get3 = _x.get(b);
-
-			var _x$get4 = _slicedToArray(_x$get3, 2);
-
-			var bx1 = _x$get4[0];
-			var bx2 = _x$get4[1];
-			var _y$get3 = _y.get(b);
-
-			var _y$get4 = _slicedToArray(_y$get3, 2);
-
-			var by1 = _y$get4[0];
-			var by2 = _y$get4[1];
-
-
-			return ax1 === bx1 && ax2 === bx2 && ay1 === by1 && ay2 === by2;
 		}
 
 		/**
