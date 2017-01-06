@@ -25,7 +25,6 @@ const n = interval.nOfT(30.0);
 
 ### Table of Contents
 
--   [xOfT](#xoft)
 -   [BezierEase](#bezierease)
     -   [constructor](#constructor)
     -   [define](#define)
@@ -33,7 +32,7 @@ const n = interval.nOfT(30.0);
     -   [y1](#y1)
     -   [x2](#x2)
     -   [y2](#y2)
-    -   [xOfT](#xoft-1)
+    -   [xOfT](#xoft)
     -   [yOfT](#yoft)
     -   [tOfX](#tofx)
     -   [tOfY](#tofy)
@@ -63,14 +62,6 @@ const n = interval.nOfT(30.0);
     -   [toString](#tostring-1)
     -   [Define](#define-3)
     -   [Extremes](#extremes)
-
-## xOfT
-
-p(t) = (1-t)³p0 + 3t(1-t)²p1 + 3t²(1-t)p2 + t³p3
-
-**Parameters**
-
--   `t`  
 
 ## BezierEase
 
