@@ -9,7 +9,6 @@ export default class Interval {
 
 	/**
 	 * Returns a defined instance
-	 * @constructor
 	 * @param {number} t0 - The first interval offset
 	 * @param {number} tDelta - The interval duration
 	 * @param {number} n0 - The first interval state
@@ -27,7 +26,6 @@ export default class Interval {
 
 	/**
 	 * Returns an instance from interval extremes
-	 * @constructor
 	 * @param {number} t0 - The first interval offset
 	 * @param {number} tN - The last interval offset
 	 * @param {number} n0 - The first interval state
