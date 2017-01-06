@@ -1,4 +1,4 @@
-#ease
+#bease
 
 ##Install
 
